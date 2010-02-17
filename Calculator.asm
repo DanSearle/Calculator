@@ -1,8 +1,9 @@
 section .text
   global main ; Define our entry point to the linker
-;; Todo use constants
+
+;; TODO use constants
 main: ;; Entry point
-  ;; Ask the user for a operation
+;; Ask the user for a operation
   mov  edx, oplen ; Message Length
   mov  ecx, op    ; Message to write
   call display    ; Display the message
