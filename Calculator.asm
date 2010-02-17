@@ -50,22 +50,22 @@
 ;               This Section is where the assembly code for the program is
 ;               written.
 section .text
-  global Main           ; Allows the linker to 'see' our Main label.
+  global main           ; Allows the linker to 'see' our Main label.
 
 ; Main ---------------------------------------------------------------------------
 ;               Main is the entry point into our calculator application, these
 ;               Lines will get executed first
-Main:
+main:
     ; This section displays a prompt for our user to enter in a operation for our
     ; calculator to use.
     mov  edx, OpAskLen  ; Load the length of the message we are prompting to the
                         ; user.
     mov  ecx, OpAsk     ; Pointer to the start of the message.
-    call display        ; Display our string, See below for implementation.
+    call Display        ; Display our string, See below for implementation.
     
     ; Read in the users input and store the value into the variable OpIn.
     mov  ecx, OpIn      ; Load the pointer to the OpIn variable.
-    call input          ; Go grab the input, See below for implementation.
+    call Input          ; Go grab the input, See below for implementation.
     
     ; Make sure we exit cleanly
     call Exit           ;  Exit the application with the code 0
@@ -113,7 +113,7 @@ Input:
 section .data 
     ; String Asks the user to enter an operation
     OpAsk    db  'Enter an Operation: ' 
-    OpAskLen equ $ - op ; Length of the text
+    OpAskLen equ $ - OpAsk ; Length of the text
 
 ;--------------------------------- BSS Section ----------------------------------
 ;               Variables which have not yet been assigned a value memory is only
