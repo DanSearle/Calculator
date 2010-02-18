@@ -50,12 +50,23 @@
 ;               This Section is where the assembly code for the program is
 ;               written.
 section .text
-  global main           ; Allows the linker to 'see' our Main label.
+  global main           ; Allows the linker to 'see' our _start label.
 
 ; Main ---------------------------------------------------------------------------
 ;               Main is the entry point into our calculator application, these
 ;               Lines will get executed first
 main:
+    pop eax             ; Pop the first item of of the stack (Gibberish?) TODO Find out why
+    pop eax             ; Pop the number of arguments off of the stack 
+    dec eax             ; Decrement the number of arguments - we dont want the program name
+    sub eax, 0x03       ; Subtract 3 from the nuumber of arguments eax will be 0 if the number of args were.
+    jnz Exit            ; FIXME: Should jump to display an error
+    pop eax             ; Pointer to the first number
+    mov [No1], eax
+    pop eax             ; Operator (Should be between the ASCII values 0x2A and 0x2D or 0x2F
+    mov [OpIn], eax
+    pop eax             ; Second number
+    mov [No2], eax
     ; This section displays a prompt for our user to enter in a operation for our
     ; calculator to use.
     mov  edx, OpAskLen  ; Load the length of the message we are prompting to the
@@ -68,7 +79,7 @@ main:
     call Input          ; Go grab the input, See below for implementation.
     
     ; Make sure we exit cleanly
-    call Exit           ;  Exit the application with the code 0
+    call Exit            ;  Exit the application with the code 0
 
 ; Exit ---------------------------------------------------------------------------
 ;               Exit is the code that exits the application safely, this
@@ -119,4 +130,7 @@ section .data
 ;               Variables which have not yet been assigned a value memory is only
 ;               allocated.
 section .bss
-    OpIn     resb 1     ; Reserve a Byte for the operation that the user entered
+    OpIn     resb 1     ; Reserve a Byte for the operation pointer
+    No1      resb 1     ; Reserve a Byte for the first number pointer
+    No2      resb 1     ; Reserve a Byte for the second number pointer
+
