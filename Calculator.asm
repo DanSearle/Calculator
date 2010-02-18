@@ -56,17 +56,35 @@ section .text
 ;               Main is the entry point into our calculator application, these
 ;               Lines will get executed first
 main:
-    pop eax             ; Pop the first item of of the stack (Gibberish?) TODO Find out why
+    ; This section grabs the arguments that were passed to the program from the
+    ; stack.
+    pop eax             ; Pop the first item of of the stack (Gibberish?)
+                        ; TODO Find out why
     pop eax             ; Pop the number of arguments off of the stack 
-    dec eax             ; Decrement the number of arguments - we dont want the program name
-    sub eax, 0x03       ; Subtract 3 from the nuumber of arguments eax will be 0 if the number of args were.
+    ;; Could be more efficient if we subtract 4 instead of caring about
+    ;; decrementing first
+    dec eax             ; Decrement the number of arguments because we dont want
+                        ; the program name
+    sub eax, 0x03       ; Subtract 3 from the nuumber of arguments eax will be 
+                        ; 0 if the number of args is equal to 3.
     jnz Exit            ; FIXME: Should jump to display an error
-    pop eax             ; Pointer to the first number
-    mov [No1], eax
-    pop eax             ; Operator (Should be between the ASCII values 0x2A and 0x2D or 0x2F
-    mov [OpIn], eax
-    pop eax             ; Second number
-    mov [No2], eax
+    pop eax             ; Pointer to the block of memory that points to the
+                        ; arguments.
+    add eax, 0x04       ; Add 4 bytes to the argument start location to not
+                        ; include the program path.
+    mov ebx, [eax]      ; Copy the data in the memory location given by EAX
+                        ; to EBX
+    mov eal, [ebx]
+    mov [No1], ecx    ; Copy ebx value to the No1 variable
+
+
+;    mov [No1], eax      ; Store the pointer to the first number
+;    pop eax             ; Operator (Should be between the ASCII values (0x2A and 
+;                        ; 0x2D) or 0x2F)
+;    mov [OpIn], eax     ; Store the pointer to the operator
+;    pop eax             ; Second number
+;    mov [No2], eax      ; Store the pointer to the second number
+;
     ; This section displays a prompt for our user to enter in a operation for our
     ; calculator to use.
     mov  edx, OpAskLen  ; Load the length of the message we are prompting to the
