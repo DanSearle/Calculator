@@ -73,18 +73,53 @@ main:
     add eax, 0x04       ; Add 4 bytes to the argument start location to not
                         ; include the program path.
     mov ebx, [eax]      ; Copy the data in the memory location given by EAX
-                        ; to EBX
-    mov eal, [ebx]
-    mov [No1], ecx    ; Copy ebx value to the No1 variable
+                        ; to EBX - Pointer address of the first argument.
+    mov ebx, [ebx]      ; Store the actual first argument to the eax register.
+    and ebx, 0x0000FF   ; Mask for one digit XXXXX32 bitwise and with 0x0000FF
+                        ; will return just 32.
+    mov [No1], ebx      ; Copy the extracted value to the variable No1
 
+    add eax, 0x04       ; Move to the next argument by incrementing our memory
+                        ; location by 0x04
+    mov ebx, [eax]      ; Grab the pointer to the next argument
+    mov ebx, [ebx]      ; Get the first bit of the argument
+    and ebx, 0x0000FF   ; Mask for only 1 byte
+    mov [OpIn], ebx     ; Save the extracted value to the variable OpIn
+    
+    add eax, 0x04       ; Move to the next argument pointer
+    mov ebx, [eax]      ; Grab the pointer
+    mov ebx, [ebx]      ; Get the argument
+    and ebx, 0x0000FF   ; Mask for the first byte
+    mov [No2], ebx      ; Save the extracted value to the variable No2
 
-;    mov [No1], eax      ; Store the pointer to the first number
-;    pop eax             ; Operator (Should be between the ASCII values (0x2A and 
-;                        ; 0x2D) or 0x2F)
-;    mov [OpIn], eax     ; Store the pointer to the operator
-;    pop eax             ; Second number
-;    mov [No2], eax      ; Store the pointer to the second number
-;
+    ;; Test for correct input values
+    mov eax, [OpIn]
+    mov eax, [No2]
+    mov eax, [No1]      ; Load the first number.
+    cmp eax, 0x30       ; Test to see if character is less than the ASCII
+                        ; value of 0.
+    jb  Exit            ; FIXME: Display an error if a number was not entered.
+                        ; Checks to se if the character entered was less than
+                        ; ASCII 0.
+    cmp eax, 0x39       ; Test to see if the character is more than ASCII 9.
+    ja  Exit            ; FIXME: Display an error if a number was not entered.
+    ;; We get here if the 1st number was valid
+
+    ;; Testing (Profides some feedback)
+    mov edx, OpAskLen
+    mov ecx, OpAsk
+    call Display
+    ;; End Testing
+    ;; Test the operator
+    mov ebx, [OpIn]     ; Load in the operator passed
+    cmp ebx, 0x2A       ; Multiplication ASCII code (*)
+    je Multiply         ; Jump to the Multiplication procedure if * was the op
+    cmp ebx, 0x2B       ; Addition ASCII code (+)
+    je Addition         ; Jump to the Addition procedure if + was the operator
+    cmp ebx, 0x2D       ; Subtraction ASCII code (-)
+    je Subtract         ; Jump to the subtract procedure if - was the operator
+    cmp ebx, 0x2F       ; Division ASCII code (/)
+    je Divide           ; Jump to the devide procedure if / was the operator
     ; This section displays a prompt for our user to enter in a operation for our
     ; calculator to use.
     mov  edx, OpAskLen  ; Load the length of the message we are prompting to the
@@ -99,6 +134,14 @@ main:
     ; Make sure we exit cleanly
     call Exit            ;  Exit the application with the code 0
 
+Subtract: ;; FIXME
+    call Exit
+Addition: ;; FIXME
+    call Exit
+Multiply:  ;; FIXME
+    call Exit
+Divide: ;; FIXME
+    call Exit
 ; Exit ---------------------------------------------------------------------------
 ;               Exit is the code that exits the application safely, this
 ;               calculator is dumb and always exits with the 0 (no error) error
@@ -148,7 +191,7 @@ section .data
 ;               Variables which have not yet been assigned a value memory is only
 ;               allocated.
 section .bss
-    OpIn     resb 1     ; Reserve a Byte for the operation pointer
-    No1      resb 1     ; Reserve a Byte for the first number pointer
-    No2      resb 1     ; Reserve a Byte for the second number pointer
+    OpIn     resw 1     ; Reserve a Word for the operation pointer
+    No1      resw 1     ; Reserve a Word for the first number pointer
+    No2      resw 1     ; Reserve a Word for the second number pointer
 
