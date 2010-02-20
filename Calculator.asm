@@ -191,7 +191,7 @@ section .data
 ;               Variables which have not yet been assigned a value memory is only
 ;               allocated.
 section .bss
-    OpIn     resw 1     ; Reserve a Word for the operation pointer
-    No1      resw 1     ; Reserve a Word for the first number pointer
-    No2      resw 1     ; Reserve a Word for the second number pointer
+    OpIn     resb 1     ; Reserve a Word for the operation pointer
+    No1      resb 1     ; Reserve a Word for the first number pointer
+    No2      resb 1     ; Reserve a Word for the second number pointer
 
