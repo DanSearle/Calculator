@@ -72,7 +72,6 @@ main:
                         ; arguments.
     add eax, 0x04       ; Add 4 bytes to the argument start location to not
                         ; include the program path.
-    ;; FIXME: copying the values results in a memory overflow into other variables
     mov ebx, [eax]      ; Copy the data in the memory location given by EAX
                         ; to EBX - Pointer address of the first argument.
     mov ebx, [ebx]      ; Store the actual first argument to the eax register.
@@ -93,58 +92,30 @@ main:
     xor eax, eax         ; Clear EAX to make sure our values are copied correctly.
     mov al, [No1]        ; Copy the first numbers value to al.
     call TestNumber      ; Call the test number routine.
+    call ConvertASCIIToNo; Convert the ASCII number to the actual numbeR
+    mov [No1], al        ; Copy the converted number to No1
     mov al, [No2]        ; Copy the second numbers value to al.
-    call TestNumber      ; Call the test number routine.
-;    xor eax, eax        ; Clear the eax register
-;    mov al, [OpIn]      ; Copy the ASCII Number for the operaton to al
-;    cmp eax, 0x2A       ; Compare the operation ASCII code to 0x2A (*)
-;                        ; Value should not be lower than this
-;    jb  Exit            ; Exit if the operator was below 0x2A ASCII
-;                        ; FIXME: Show error instead of exit
-;    cmp eax, 0x2F       ; Operator ASCII value can't be higher than 0x2F (/) 
-;    ja  Exit            ; Exit if the ASCII value was above 0x2F
-;
-;    cmp eax, 0x2E       ; Operator shouldn't be . ASCII 0x2E
-;    je  Exit            
-;
-;    cmp eax, 0x2C       ; Operator shouodn't be , ASCII 0x2C
-;    je  Exit
-    ;mov al, [No1]      ; Load the first number.
-    ;cmp eax, 0x30       ; Test to see if character is less than the ASCII
-    ;                    ; value of 0.
-    ;jb  Exit            ; FIXME: Display an error if a number was not entered.
-                        ; Checks to se if the character entered was less than
-                        ; ASCII 0.
-    ;cmp eax, 0x39       ; Test to see if the character is more than ASCII 9.
-    ;ja  Exit            ; FIXME: Display an error if a number was not entered.
-    ;; We get here if the 1st number was valid
+    call TestNumber
+    call ConvertASCIIToNo; Convert the ASCII number to the actual number
+    mov [No2]. al        ; Copy the converted number to  No2
+    ;; We get here if the numbers were valid
 
-    ;; End Testing
     ;; Test the operator
-    mov ebx, [OpIn]     ; Load in the operator passed
-    cmp ebx, 0x2A       ; Multiplication ASCII code (*)
+    xor eax, eax
+    mov al, [OpIn]     ; Load in the operator passed
+    cmp al, 0x2A       ; Multiplication ASCII code (*)
     je Multiply         ; Jump to the Multiplication procedure if * was the op
-    cmp ebx, 0x2B       ; Addition ASCII code (+)
+    cmp al, 0x2B       ; Addition ASCII code (+)
     je Addition         ; Jump to the Addition procedure if + was the operator
-    cmp ebx, 0x2D       ; Subtraction ASCII code (-)
+    cmp al, 0x2D       ; Subtraction ASCII code (-)
     je Subtract         ; Jump to the subtract procedure if - was the operator
-    cmp ebx, 0x2F       ; Division ASCII code (/)
+    cmp al, 0x2F       ; Division ASCII code (/)
     je Divide           ; Jump to the devide procedure if / was the operator
+    
     ; A Valid operator was not entered Exit, FIXME: Display visual feedback
     jmp Exit
-    ; This section displays a prompt for our user to enter in a operation for our
-    ; calculator to use.
-    mov  edx, OpAskLen  ; Load the length of the message we are prompting to the
-                        ; user.
-    mov  ecx, OpAsk     ; Pointer to the start of the message.
-    call Display        ; Display our string, See below for implementation.
-    
-    ; Read in the users input and store the value into the variable OpIn.
-    mov  ecx, OpIn      ; Load the pointer to the OpIn variable.
-    call Input          ; Go grab the input, See below for implementation.
-    
-    ; Make sure we exit cleanly
-    call Exit            ;  Exit the application with the code 0
+;; FIXME: Could we combine the TestNumber and convert operations into One?
+;; FIXME: Possibly not need ASCII conversion? becasuse arithmetic may still work?
 ; TestNumber --------------------------------------------------------------------
 ;               Tests that the value in EAX is a valid ASCII number.
 ;
@@ -152,9 +123,20 @@ TestNumber:
     cmp eax, 0x30       ; ASCII value should not be below 0x30 Number 0.
     jb  Exit            ; Exit if it is FIXME: Display error.
     cmp eax, 0x39       ; ASCII value should not be below 0x39 Number 9.
-    jb  Exit            ; Exit if it is FIXME: Display error.
+    ja  Exit            ; Exit if it is FIXME: Display error.
     ret 0               ; Return if the number was valid.
-Subtract: ;; FIXME
+; ConvertASCIIToNo --------------------------------------------------------------
+;               Converts a ASCII value of a number into the actual number, by
+;               subtracting 0x30 from the number. Input value to EAX and Output
+;               number to EAX.
+ConvertASCIIToNo:
+    sub eax, 0x30       ; Subtract 0x30 from eax to get the actual number 
+    ret 0               ; Return to who called us
+Subtract: 
+    xor eax, eax        ; Clear eax just incase we have a large value
+    mov al, [No1]       ; Copy the first number to eax
+    sub eax, [No2]      ; Subtract the second number from eax
+    mov [Result], eax   ; Save the result to the Result variable
     call Exit
 Addition: ;; FIXME
     call Exit
@@ -211,7 +193,8 @@ section .data
 ;               Variables which have not yet been assigned a value memory is only
 ;               allocated.
 section .bss
-    No1      resb 1     ; Reserve a Word for the first number pointer
-    OpIn     resb 1     ; Reserve a Word for the operation pointer
-    No2      resb 1     ; Reserve a Word for the second number pointer
+    No1      resb 1     ; Reserve a byte for the first number pointer
+    OpIn     resb 1     ; Reserve a byte for the operation pointer
+    No2      resb 1     ; Reserve a byte for the second number pointer
+    Result   resw 1     ; Reserve a Word for the result
 
