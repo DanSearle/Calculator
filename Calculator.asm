@@ -72,43 +72,53 @@ main:
                         ; arguments.
     add eax, 0x04       ; Add 4 bytes to the argument start location to not
                         ; include the program path.
+    ;; FIXME: copying the values results in a memory overflow into other variables
     mov ebx, [eax]      ; Copy the data in the memory location given by EAX
                         ; to EBX - Pointer address of the first argument.
     mov ebx, [ebx]      ; Store the actual first argument to the eax register.
-    and ebx, 0x0000FF   ; Mask for one digit XXXXX32 bitwise and with 0x0000FF
-                        ; will return just 32.
-    mov [No1], ebx      ; Copy the extracted value to the variable No1
+    mov [No1], bl      ; Copy the extracted value to the variable No1
 
     add eax, 0x04       ; Move to the next argument by incrementing our memory
                         ; location by 0x04
     mov ebx, [eax]      ; Grab the pointer to the next argument
     mov ebx, [ebx]      ; Get the first bit of the argument
-    and ebx, 0x0000FF   ; Mask for only 1 byte
-    mov [OpIn], ebx     ; Save the extracted value to the variable OpIn
+    mov [OpIn], bl     ; Save the extracted value to the variable OpIn
     
     add eax, 0x04       ; Move to the next argument pointer
     mov ebx, [eax]      ; Grab the pointer
     mov ebx, [ebx]      ; Get the argument
-    and ebx, 0x0000FF   ; Mask for the first byte
-    mov [No2], ebx      ; Save the extracted value to the variable No2
+    mov [No2], bl      ; Save the extracted value to the variable No2
 
     ;; Test for correct input values
-    mov eax, [OpIn]
-    mov eax, [No2]
-    mov eax, [No1]      ; Load the first number.
-    cmp eax, 0x30       ; Test to see if character is less than the ASCII
-                        ; value of 0.
-    jb  Exit            ; FIXME: Display an error if a number was not entered.
+    xor eax, eax         ; Clear EAX to make sure our values are copied correctly.
+    mov al, [No1]        ; Copy the first numbers value to al.
+    call TestNumber      ; Call the test number routine.
+    mov al, [No2]        ; Copy the second numbers value to al.
+    call TestNumber      ; Call the test number routine.
+;    xor eax, eax        ; Clear the eax register
+;    mov al, [OpIn]      ; Copy the ASCII Number for the operaton to al
+;    cmp eax, 0x2A       ; Compare the operation ASCII code to 0x2A (*)
+;                        ; Value should not be lower than this
+;    jb  Exit            ; Exit if the operator was below 0x2A ASCII
+;                        ; FIXME: Show error instead of exit
+;    cmp eax, 0x2F       ; Operator ASCII value can't be higher than 0x2F (/) 
+;    ja  Exit            ; Exit if the ASCII value was above 0x2F
+;
+;    cmp eax, 0x2E       ; Operator shouldn't be . ASCII 0x2E
+;    je  Exit            
+;
+;    cmp eax, 0x2C       ; Operator shouodn't be , ASCII 0x2C
+;    je  Exit
+    ;mov al, [No1]      ; Load the first number.
+    ;cmp eax, 0x30       ; Test to see if character is less than the ASCII
+    ;                    ; value of 0.
+    ;jb  Exit            ; FIXME: Display an error if a number was not entered.
                         ; Checks to se if the character entered was less than
                         ; ASCII 0.
-    cmp eax, 0x39       ; Test to see if the character is more than ASCII 9.
-    ja  Exit            ; FIXME: Display an error if a number was not entered.
+    ;cmp eax, 0x39       ; Test to see if the character is more than ASCII 9.
+    ;ja  Exit            ; FIXME: Display an error if a number was not entered.
     ;; We get here if the 1st number was valid
 
-    ;; Testing (Profides some feedback)
-    mov edx, OpAskLen
-    mov ecx, OpAsk
-    call Display
     ;; End Testing
     ;; Test the operator
     mov ebx, [OpIn]     ; Load in the operator passed
@@ -120,6 +130,8 @@ main:
     je Subtract         ; Jump to the subtract procedure if - was the operator
     cmp ebx, 0x2F       ; Division ASCII code (/)
     je Divide           ; Jump to the devide procedure if / was the operator
+    ; A Valid operator was not entered Exit, FIXME: Display visual feedback
+    jmp Exit
     ; This section displays a prompt for our user to enter in a operation for our
     ; calculator to use.
     mov  edx, OpAskLen  ; Load the length of the message we are prompting to the
@@ -133,7 +145,15 @@ main:
     
     ; Make sure we exit cleanly
     call Exit            ;  Exit the application with the code 0
-
+; TestNumber --------------------------------------------------------------------
+;               Tests that the value in EAX is a valid ASCII number.
+;
+TestNumber:
+    cmp eax, 0x30       ; ASCII value should not be below 0x30 Number 0.
+    jb  Exit            ; Exit if it is FIXME: Display error.
+    cmp eax, 0x39       ; ASCII value should not be below 0x39 Number 9.
+    jb  Exit            ; Exit if it is FIXME: Display error.
+    ret 0               ; Return if the number was valid.
 Subtract: ;; FIXME
     call Exit
 Addition: ;; FIXME
@@ -191,7 +211,7 @@ section .data
 ;               Variables which have not yet been assigned a value memory is only
 ;               allocated.
 section .bss
-    OpIn     resb 1     ; Reserve a Word for the operation pointer
     No1      resb 1     ; Reserve a Word for the first number pointer
+    OpIn     resb 1     ; Reserve a Word for the operation pointer
     No2      resb 1     ; Reserve a Word for the second number pointer
 
