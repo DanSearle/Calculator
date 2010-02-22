@@ -74,42 +74,42 @@ main:
                         ; include the program path.
     mov ebx, [eax]      ; Copy the data in the memory location given by EAX
                         ; to EBX - Pointer address of the first argument.
-    mov ebx, [ebx]      ; Store the actual first argument to the eax register.
-    mov [No1], bl      ; Copy the extracted value to the variable No1
+    mov ebx, [ebx]      ; Store the actual first argument to the eax register. FIXME: Copy to bl register?
+    mov [No1], bl       ; Copy the extracted value to the variable No1
 
     add eax, 0x04       ; Move to the next argument by incrementing our memory
                         ; location by 0x04
     mov ebx, [eax]      ; Grab the pointer to the next argument
-    mov ebx, [ebx]      ; Get the first bit of the argument
-    mov [OpIn], bl     ; Save the extracted value to the variable OpIn
+    mov ebx, [ebx]      ; Get the first bit of the argument. FIXME: Copy to bl register?
+    mov [OpIn], bl      ; Save the extracted value to the variable OpIn
     
     add eax, 0x04       ; Move to the next argument pointer
     mov ebx, [eax]      ; Grab the pointer
     mov ebx, [ebx]      ; Get the argument
-    mov [No2], bl      ; Save the extracted value to the variable No2
+    mov [No2], bl       ; Save the extracted value to the variable No2
 
     ;; Test for correct input values
-    xor eax, eax         ; Clear EAX to make sure our values are copied correctly.
-    mov al, [No1]        ; Copy the first numbers value to al.
-    call TestNumber      ; Call the test number routine.
-    call ConvertASCIIToNo; Convert the ASCII number to the actual numbeR
-    mov [No1], al        ; Copy the converted number to No1
-    mov al, [No2]        ; Copy the second numbers value to al.
-    call TestNumber
-    call ConvertASCIIToNo; Convert the ASCII number to the actual number
-    mov [No2], al        ; Copy the converted number to  No2
+    xor eax, eax        ; Clear EAX to make sure our values are copied correctly.
+    mov al, [No1]       ; Copy the first numbers value to al.
+    call TestNumber     ; Call the test number routine.
+    call ConvASCIIToNo  ; Convert the ASCII number to the actual numbeR
+    mov [No1], al       ; Copy the converted number to No1
+    mov al, [No2]       ; Copy the second numbers value to al.
+    call TestNumber     ; Call the test number routine.
+    call ConvASCIIToNo  ; Convert the ASCII number to the actual number
+    mov [No2], al       ; Copy the converted number to  No2
     ;; We get here if the numbers were valid
 
     ;; Test the operator
     xor eax, eax
-    mov al, [OpIn]     ; Load in the operator passed
-    cmp al, 0x2A       ; Multiplication ASCII code (*)
+    mov al, [OpIn]      ; Load in the operator passed
+    cmp al, 0x2A        ; Multiplication ASCII code (*)
     je Multiply         ; Jump to the Multiplication procedure if * was the op
-    cmp al, 0x2B       ; Addition ASCII code (+)
+    cmp al, 0x2B        ; Addition ASCII code (+)
     je Addition         ; Jump to the Addition procedure if + was the operator
-    cmp al, 0x2D       ; Subtraction ASCII code (-)
+    cmp al, 0x2D        ; Subtraction ASCII code (-)
     je Subtract         ; Jump to the subtract procedure if - was the operator
-    cmp al, 0x2F       ; Division ASCII code (/)
+    cmp al, 0x2F        ; Division ASCII code (/)
     je Divide           ; Jump to the devide procedure if / was the operator
     
     ; A Valid operator was not entered Exit, FIXME: Display visual feedback
@@ -242,6 +242,6 @@ section .bss
     No1      resb 1     ; Reserve a byte for the first number pointer
     OpIn     resb 1     ; Reserve a byte for the operation pointer
     No2      resb 1     ; Reserve a byte for the second number pointer
-    Result   resw 1     ; Reserve a word for the result
+    Result   resw 1     ; Reserve a word for the result as a pure binary number
     ResASCII resw 1     ; Reserve a word for the result in ASCII
 
