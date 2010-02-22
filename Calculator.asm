@@ -97,7 +97,7 @@ main:
     mov al, [No2]        ; Copy the second numbers value to al.
     call TestNumber
     call ConvertASCIIToNo; Convert the ASCII number to the actual number
-    mov [No2]. al        ; Copy the converted number to  No2
+    mov [No2], al        ; Copy the converted number to  No2
     ;; We get here if the numbers were valid
 
     ;; Test the operator
@@ -125,6 +125,12 @@ TestNumber:
     cmp eax, 0x39       ; ASCII value should not be below 0x39 Number 9.
     ja  Exit            ; Exit if it is FIXME: Display error.
     ret 0               ; Return if the number was valid.
+; ConvertNoToASCII --------------------------------------------------------------
+;               Converts a number into its ASCII representation, by adding 0x30
+;               to the number. Input number to EAX and Output value to EAX
+ConvertNoToASCII:
+    add eax, 0x30
+    ret 0
 ; ConvertASCIIToNo --------------------------------------------------------------
 ;               Converts a ASCII value of a number into the actual number, by
 ;               subtracting 0x30 from the number. Input value to EAX and Output
@@ -135,9 +141,12 @@ ConvertASCIIToNo:
 Subtract: 
     xor eax, eax        ; Clear eax just incase we have a large value
     mov al, [No1]       ; Copy the first number to eax
-    sub eax, [No2]      ; Subtract the second number from eax
+    sub al, [No2]      ; Subtract the second number from eax
+    call ConvertNoToASCII; Convert the result to ASCII
+    mov ah, 0x0A        ; Add a newline
     mov [Result], eax   ; Save the result to the Result variable
-    call Exit
+    call DisplayResult  ; Display the result to the console
+    call Exit           ; Exit the application safely
 Addition: ;; FIXME
     call Exit
 Multiply:  ;; FIXME
@@ -157,7 +166,14 @@ Exit:
     mov eax, sys_exit   ; Use the sys_exit system call from the kernel.
     int Kernel          ; Interrupt to call the Linux kernel.
     ret 0x00            ; Return - Should never reach here but as good practice.
-
+; DisplayResult ------------------------------------------------------------------
+;               Display the result of a calculation to the console
+;; FIXME: We need to display reults bigger than 1 character
+DisplayResult:
+    mov  ecx, Result     ; Save the output of the calculation to the ecx register
+    mov  edx, 2          ; Size of the output
+    call Display         ; Call the display function
+    ret  0
 ; Display ------------------------------------------------------------------------
 ;               Display is a section which displays the text to STDOUT using the
 ;               sys_write function. The call uses the string pointed to by the 
