@@ -103,7 +103,7 @@ main:
     cmp al, 0x2F        ; Division ASCII code (/)
     je Divide           ; Jump to the devide procedure if / was the operator
     
-    ; A Valid operator was not entered Exit, FIXME: Display visual feedback
+    ; A invalid operator was entered Exit, FIXME: Display visual feedback
     jmp Exit
 ;; FIXME: Could we combine the TestNumber and convert operations into One?
 ;; FIXME: Possibly not need ASCII conversion? becasuse arithmetic may still work?
@@ -133,7 +133,7 @@ TestNumber:
 ConvNoToASCII:
     add eax, 0x30
     ret 0
-; ConASCIIToNo ------------------------------------------------------------------
+; ConvASCIIToNo -----------------------------------------------------------------
 ;               Converts a ASCII value of a number into the actual number, by    `
 ;               subtracting 0x30 from the number. Input value to EAX and Output  | 
 ;               number to EAX.                                                   | 
