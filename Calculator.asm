@@ -68,25 +68,16 @@ main:
     sub eax, 0x03       ; Subtract 3 from the nuumber of arguments eax will be 
                         ; 0 if the number of args is equal to 3.
     jnz Exit            ; FIXME: Should jump to display an error
-    pop eax             ; Pointer to the block of memory that points to the
+    pop ebx             ; Pointer to the block of memory that points to the
                         ; arguments.
-    add eax, 0x04       ; Add 4 bytes to the argument start location to not
-                        ; include the program path.
-    mov ebx, [eax]      ; Copy the data in the memory location given by EAX
-                        ; to EBX - Pointer address of the first argument.
-    mov ebx, [ebx]      ; Store the actual first argument to the eax register. FIXME: Copy to bl register?
-    mov [No1], bl       ; Copy the extracted value to the variable No1
+    call NextArg        ; Get the next argument
+    mov [No1], al       ; Copy the extracted value to the variable No1
 
-    add eax, 0x04       ; Move to the next argument by incrementing our memory
-                        ; location by 0x04
-    mov ebx, [eax]      ; Grab the pointer to the next argument
-    mov ebx, [ebx]      ; Get the first bit of the argument. FIXME: Copy to bl register?
-    mov [OpIn], bl      ; Save the extracted value to the variable OpIn
+    call NextArg        ; Get the next argument
+    mov [OpIn], al      ; Save the extracted value to the variable OpIn
     
-    add eax, 0x04       ; Move to the next argument pointer
-    mov ebx, [eax]      ; Grab the pointer
-    mov ebx, [ebx]      ; Get the argument
-    mov [No2], bl       ; Save the extracted value to the variable No2
+    call NextArg        ; Get the next argument
+    mov [No2], al       ; Save the extracted value to the variable No2
 
     ;; Test for correct input values
     xor eax, eax        ; Clear EAX to make sure our values are copied correctly.
@@ -116,6 +107,17 @@ main:
     jmp Exit
 ;; FIXME: Could we combine the TestNumber and convert operations into One?
 ;; FIXME: Possibly not need ASCII conversion? becasuse arithmetic may still work?
+; NextArg -----------------------------------------------------------------------
+;               Get the next argument and store it in EAX.                       `
+;                                                                                |
+NextArg:
+    add ebx, 0x04       ; Move to the next argument by incrementing our memory
+                        ; location by 0x04
+    mov ecx, [ebx]      ; Grab the pointer to the next argument
+    xor eax, eax        ; Clear eax
+    mov al, [ecx]       ; Get the first bit of the argument.
+    ret 0               ; Return
+
 ; TestNumber --------------------------------------------------------------------
 ;               Tests that the value in EAX is a valid ASCII number.             `
 ;                                                                                |
@@ -131,11 +133,11 @@ TestNumber:
 ConvNoToASCII:
     add eax, 0x30
     ret 0
-; ConvertASCIIToNo --------------------------------------------------------------
+; ConASCIIToNo ------------------------------------------------------------------
 ;               Converts a ASCII value of a number into the actual number, by    `
 ;               subtracting 0x30 from the number. Input value to EAX and Output  | 
 ;               number to EAX.                                                   | 
-ConvertASCIIToNo:
+ConvASCIIToNo:
     sub eax, 0x30       ; Subtract 0x30 from eax to get the actual number 
     ret 0               ; Return to who called us
 ; StrValues ---------------------------------------------------------------------
