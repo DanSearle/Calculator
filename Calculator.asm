@@ -138,25 +138,35 @@ ConvertNoToASCII:
 ConvertASCIIToNo:
     sub eax, 0x30       ; Subtract 0x30 from eax to get the actual number 
     ret 0               ; Return to who called us
+; StrValues ---------------------------------------------------------------------
+;               Copy the grabbed values from memory into the AL and BL registers.`
+;               Also clear EAX, EBX and EDX to make sure calculations are        |
+;               correct.                                                         |
+StrValues:  
+    xor eax, eax        ; Clear the main registers to prevent our calculations 
+    xor ebx, ebx        ; from breaking.
+    xor edx, edx        ;
+
+    mov al, [No1]       ; Copy the first number to the AL register
+    mov bl, [No2]       ; Copy the second number to the BL register
+    ret 0
 ; Subtract ----------------------------------------------------------------------
 ;               Performs the calculation No1 - No2 = Result and displays the     `
 ;               result in ASCII to the terminal.                                 |
 Subtract: 
-    xor eax, eax        ; Clear eax just incase we have a large value
-    mov al, [No1]       ; Copy the first number to al
-    sub al, [No2]      ; Subtract the second number from al
+    call StrValues      ; Copy the values over
+    sub  al, bl          ; Subtract the second number from the first number
     call ConvertNoToASCII; Convert the result to ASCII
-    mov ah, 0x0A        ; Add a newline
-    mov [Result], eax   ; Save the result to the Result variable (In ASCII format)
+    mov  ah, 0x0A        ; Add a newline
+    mov  [Result], eax   ; Save the result to the Result variable (In ASCII format)
     call DisplayResult  ; Display the result to the console
     call Exit           ; Exit the application safely
 ; Addition ----------------------------------------------------------------------
 ;               Performs the calulation No1 + No2 = Result and displays the      `
 ;               result in ASCII to the terminal.                                 |
 Addition: 
-    xor eax, eax        ; Clear eax so we have a blank sheet
-    mov al, [No1]       ; Copy No1 to al
-    add al, [No2]       ; Add No2 to al
+    call StrValues      ; Copy the values over
+    add  al, bl         ; Add the first and second numbers together 
     call ConvertNoToASCII; Convert the result to ASCII
     mov ah, 0x0A        ; Add a newline to the string
     mov [Result], eax   ; Store the result (In ASCII format)
@@ -166,11 +176,8 @@ Addition:
 ;               Performs the calculation No1 * No2 = Result and displays the     `
 ;               result in ASCII to the terminal.                                 |
 Multiply: 
-    xor eax, eax        ; Clear eax so we have a blank sheet
-    xor ebx, ebx        ; Clear ebx so we have a blank sheet
-    mov al, [No1]       ; Copy No1 to al
-    mov bl, [No2]       ; Copy No2 to bl
-    mul ebx             ; Multiply ebx to eax
+    call StrValues      ; Copy the values over
+    mul ebx             ; Multiply EAX(First number) by EBX(Second number)
     call ConvertNoToASCII; Convert the result to ASCII
     mov ah, 0x0A        ; Add a newline to the string
     mov [Result], eax   ; Save the result (In ASCII format)
@@ -180,12 +187,9 @@ Multiply:
 ;               Performs the calculation No1/No2 = Result and displays the      `
 ;               result in ASCII to the terminal.                                |
 Divide: 
-    xor eax, eax        ; Clear eax so we have a blank sheet
-    xor ebx, ebx        ; Clear ebx so we have a blank sheet
-    xor edx, edx        ; Clear edx because the division uses edx:eax
-    mov al, [No1]       ; Copy No1 to al
-    mov bl, [No2]       ; Copy No2 to bl
-    idiv ebx            ; Integer Divide edx:eax by ebx
+    call StrValues      ; Copy the values over
+    idiv ebx            ; Integer Divide EDX:EAX(First number) by
+                        ; EBX(Second Number).
     call ConvertNoToASCII; Convert the result to ASCII
     mov ah, 0x0A        ; Add a newline to the string
     mov [Result], eax   ; Save the result (In ASCII format)
