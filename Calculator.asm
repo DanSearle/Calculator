@@ -132,23 +132,36 @@ ConvertNoToASCII:
     add eax, 0x30
     ret 0
 ; ConvertASCIIToNo --------------------------------------------------------------
-;               Converts a ASCII value of a number into the actual number, by
-;               subtracting 0x30 from the number. Input value to EAX and Output
-;               number to EAX.
+;               Converts a ASCII value of a number into the actual number, by    `
+;               subtracting 0x30 from the number. Input value to EAX and Output  | 
+;               number to EAX.                                                   | 
 ConvertASCIIToNo:
     sub eax, 0x30       ; Subtract 0x30 from eax to get the actual number 
     ret 0               ; Return to who called us
+; Subtract ----------------------------------------------------------------------
+;               Performs the calculation No1 - No2 = Result and displays the     `
+;               result in ASCII to the terminal.                                 |
 Subtract: 
     xor eax, eax        ; Clear eax just incase we have a large value
-    mov al, [No1]       ; Copy the first number to eax
-    sub al, [No2]      ; Subtract the second number from eax
+    mov al, [No1]       ; Copy the first number to al
+    sub al, [No2]      ; Subtract the second number from al
     call ConvertNoToASCII; Convert the result to ASCII
     mov ah, 0x0A        ; Add a newline
     mov [Result], eax   ; Save the result to the Result variable
     call DisplayResult  ; Display the result to the console
     call Exit           ; Exit the application safely
-Addition: ;; FIXME
-    call Exit
+; Addition ----------------------------------------------------------------------
+;               Performs the calulation No1 + No2 = Result and displays the      `
+;               result in ASCII to the terminal.                                 |
+Addition: 
+    xor eax, eax        ; Clear eax so we have a blank sheet
+    mov al, [No1]       ; Copy No1 to al
+    add al, [No2]       ; Add No2 to al
+    call ConvertNoToASCII; Convert the result to ASCII
+    mov ah, 0x0A        ; Add a newline to the string
+    mov [Result], eax   ; Store the result
+    call DisplayResult  ; Display the result
+    call Exit           ; Exit the application safely.
 Multiply:  ;; FIXME
     call Exit
 Divide: ;; FIXME
