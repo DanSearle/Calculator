@@ -147,7 +147,7 @@ Subtract:
     sub al, [No2]      ; Subtract the second number from al
     call ConvertNoToASCII; Convert the result to ASCII
     mov ah, 0x0A        ; Add a newline
-    mov [Result], eax   ; Save the result to the Result variable
+    mov [Result], eax   ; Save the result to the Result variable (In ASCII format)
     call DisplayResult  ; Display the result to the console
     call Exit           ; Exit the application safely
 ; Addition ----------------------------------------------------------------------
@@ -159,13 +159,38 @@ Addition:
     add al, [No2]       ; Add No2 to al
     call ConvertNoToASCII; Convert the result to ASCII
     mov ah, 0x0A        ; Add a newline to the string
-    mov [Result], eax   ; Store the result
+    mov [Result], eax   ; Store the result (In ASCII format)
     call DisplayResult  ; Display the result
     call Exit           ; Exit the application safely.
-Multiply:  ;; FIXME
-    call Exit
-Divide: ;; FIXME
-    call Exit
+; Multiply ----------------------------------------------------------------------
+;               Performs the calculation No1 * No2 = Result and displays the     `
+;               result in ASCII to the terminal.                                 |
+Multiply: 
+    xor eax, eax        ; Clear eax so we have a blank sheet
+    xor ebx, ebx        ; Clear ebx so we have a blank sheet
+    mov al, [No1]       ; Copy No1 to al
+    mov bl, [No2]       ; Copy No2 to bl
+    mul ebx             ; Multiply ebx to eax
+    call ConvertNoToASCII; Convert the result to ASCII
+    mov ah, 0x0A        ; Add a newline to the string
+    mov [Result], eax   ; Save the result (In ASCII format)
+    call DisplayResult  ; Display the result
+    call Exit           ; Exit the application safely.
+; Divide -----------------------------------------------------------------------
+;               Performs the calculation No1/No2 = Result and displays the      `
+;               result in ASCII to the terminal.                                |
+Divide: 
+    xor eax, eax        ; Clear eax so we have a blank sheet
+    xor ebx, ebx        ; Clear ebx so we have a blank sheet
+    xor edx, edx        ; Clear edx because the division uses edx:eax
+    mov al, [No1]       ; Copy No1 to al
+    mov bl, [No2]       ; Copy No2 to bl
+    idiv ebx            ; Integer Divide edx:eax by ebx
+    call ConvertNoToASCII; Convert the result to ASCII
+    mov ah, 0x0A        ; Add a newline to the string
+    mov [Result], eax   ; Save the result (In ASCII format)
+    call DisplayResult  ; Display the result
+    call Exit           ; Exit the application safely.
 ; Exit ---------------------------------------------------------------------------
 ;               Exit is the code that exits the application safely, this
 ;               calculator is dumb and always exits with the 0 (no error) error
