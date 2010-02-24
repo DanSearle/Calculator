@@ -31,6 +31,7 @@
 ConvNoToASCII:
     add eax, 0x30
     ret 0
+
 ; ConvASCIIToNo -----------------------------------------------------------------
 ;               Converts a ASCII value of a number into the actual number, by    `
 ;               subtracting 0x30 from the number. Input value to EAX and Output  | 
@@ -38,4 +39,14 @@ ConvNoToASCII:
 ConvASCIIToNo:
     sub eax, 0x30       ; Subtract 0x30 from eax to get the actual number 
     ret 0               ; Return to who called us
+
+; TestNumber --------------------------------------------------------------------
+;               Tests that the value in EAX is a valid ASCII number.             `
+;                                                                                |
+TestNumber:
+    cmp eax, 0x30       ; ASCII value should not be below 0x30 Number 0.
+    jb  Exit            ; Exit if it is FIXME: Display error.
+    cmp eax, 0x39       ; ASCII value should not be below 0x39 Number 9.
+    ja  Exit            ; Exit if it is FIXME: Display error.
+    ret 0               ; Return if the number was valid.
 
