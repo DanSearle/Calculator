@@ -46,6 +46,11 @@
 %define Kernel    0x80 ; Interrupt number for the Linux kernel.
 ;=================================================================================
 
+;----------------------------------- Includes ------------------------------------
+;               Other files which contain code that is called from this file      `
+;                                                                                 |
+%include "lib/ASCII.asm"; Provides ASCII conversion
+
 ;--------------------------------- Text Section ----------------------------------
 ;               This Section is where the assembly code for the program is        `
 ;               written.                                                          |
@@ -127,19 +132,6 @@ TestNumber:
     cmp eax, 0x39       ; ASCII value should not be below 0x39 Number 9.
     ja  Exit            ; Exit if it is FIXME: Display error.
     ret 0               ; Return if the number was valid.
-; ConvNoToASCII -----------------------------------------------------------------
-;               Converts a number into its ASCII representation, by adding 0x30  `
-;               to the number. Input number to EAX and Output value to EAX       |
-ConvNoToASCII:
-    add eax, 0x30
-    ret 0
-; ConvASCIIToNo -----------------------------------------------------------------
-;               Converts a ASCII value of a number into the actual number, by    `
-;               subtracting 0x30 from the number. Input value to EAX and Output  | 
-;               number to EAX.                                                   | 
-ConvASCIIToNo:
-    sub eax, 0x30       ; Subtract 0x30 from eax to get the actual number 
-    ret 0               ; Return to who called us
 ; StrValues ---------------------------------------------------------------------
 ;               Copy the grabbed values from memory into the AL and BL registers.`
 ;               Also clear EAX, EBX and EDX to make sure calculations are        |
