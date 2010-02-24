@@ -87,11 +87,11 @@ main:
     ;; Test for correct input values
     xor eax, eax        ; Clear EAX to make sure our values are copied correctly.
     mov al, [No1]       ; Copy the first numbers value to al.
-    call TestNumber     ; Call the test number routine.
+    call TestASCIINumber     ; Call the test number routine.
     call ConvASCIIToNo  ; Convert the ASCII number to the actual numbeR
     mov [No1], al       ; Copy the converted number to No1
     mov al, [No2]       ; Copy the second numbers value to al.
-    call TestNumber     ; Call the test number routine.
+    call TestASCIINumber     ; Call the test number routine.
     call ConvASCIIToNo  ; Convert the ASCII number to the actual number
     mov [No2], al       ; Copy the converted number to  No2
     ;; We get here if the numbers were valid
@@ -110,7 +110,7 @@ main:
     
     ; A invalid operator was entered Exit, FIXME: Display visual feedback
     jmp Exit
-;; FIXME: Could we combine the TestNumber and convert operations into One?
+;; FIXME: Could we combine the TestASCIINumber and convert operations into One?
 ;; FIXME: Possibly not need ASCII conversion? becasuse arithmetic may still work?
 ; NextArg -----------------------------------------------------------------------
 ;               Get the next argument and store it in EAX.                       `
@@ -122,7 +122,6 @@ NextArg:
     xor eax, eax        ; Clear eax
     mov al, [ecx]       ; Get the first bit of the argument.
     ret 0               ; Return
-
 ; StrValues ---------------------------------------------------------------------
 ;               Copy the grabbed values from memory into the AL and BL registers.`
 ;               Also clear EAX, EBX and EDX to make sure calculations are        |
