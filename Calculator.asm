@@ -26,30 +26,11 @@
 ; Authors     | Original Author: Daniel Searle <oss@d-searle.co.uk> 2010         ;
 ;=================================================================================
 
-;------------------------------------ Macros -------------------------------------
-;               Below are macros in order to help us remember how to fill out the `
-;               'parameters' of a interrupt call.                                 |
-;---------------------------------------------------------------------------------
-; Functions   | Numbers which are used in order to call a function from the Linux `
-;             | kernel.                                                           |
-%define sys_exit  0x01 ; sys_exit function number See `man 2 exit`
-%define sys_read  0x03 ; sys_read function number See `man 2 read`
-%define sys_write 0x04 ; sys_write function number See `man 2 write`
-;---------------------------------------------------------------------------------
-; Files       | Number which are used for file descriptors.                       `
-;             |                                                                   |
-%define STDIN     0x00 ; Standard input  buffer is 0, when using sys_* functions.
-%define STDOUT    0x01 ; Standard output buffer is 1, when using sys_* functions.
-;---------------------------------------------------------------------------------
-; Interrupts  | Numbers which are used for interrupts.                            `
-;             |                                                                   |
-%define Kernel    0x80 ; Interrupt number for the Linux kernel.
-;=================================================================================
-
 ;----------------------------------- Includes ------------------------------------
 ;               Other files which contain code that is called from this file      `
 ;                                                                                 |
-%include "lib/ASCII.asm"; Provides ASCII conversion
+%include "lib/LinuxMacros.asm"  ; Provides macros for the Linux kernel calls.
+%include "lib/ASCII.asm"        ; Provides ASCII conversion.
 
 ;--------------------------------- Text Section ----------------------------------
 ;               This Section is where the assembly code for the program is        `
@@ -185,7 +166,7 @@ Exit:
                         ; 0101 XOR 0101 you will get 0, because an XOR gate will
                         ; only return a 1 if the gates inputs are different.
     mov eax, sys_exit   ; Use the sys_exit system call from the kernel.
-    int Kernel          ; Interrupt to call the Linux kernel.
+    int kernel          ; Interrupt to call the Linux kernel.
     ret 0x00            ; Return - Should never reach here but as good practice.
 ; DisplayResult -----------------------------------------------------------------
 ;               Display the result of a calculation to the console               `
@@ -208,7 +189,7 @@ DisplayResult:
 Display: 
     mov ebx, STDOUT     ; Send the string to standard output.
     mov eax, sys_write  ; We want to use the sys_write Linux function.
-    int Kernel          ; Call the Linux kernel
+    int kernel          ; Call the Linux kernel
     ret 0               ; Return to the section of code that called us.
 
 ;--------------------------------- Data Section ---------------------------------
