@@ -21,38 +21,19 @@
 ;=================================================================================
 
 ; Alloc --------------------------------------------------------------------------
-;             Allocate memory for a variable, Input is EBX -> size to allocate,   `
-;             ECX -> Protection flags (see `man 2 mmap`), EDX -> Visibility Flags |
+;             Allocate memory for a variable, Input is ECX -> size to allocate,   `
+;             EDX -> Protection flags (see `man 2 mmap`), ESI -> Visibility Flags |
 ;             (see `man 2 mmap`). Pointer to the memory address will be stored in |
-;             EBX on return.                                                      |
+;             ECX on return.                                                      |
 Alloc:
-    mov  [mmapLen],  ebx; Store the length of memory to allocate
-    mov  [mmapProt], ecx; Store the protection flags
-    mov  [mmapFlags],edx; Store the visibility flags 
-    
-    mov  ebx,       0x00; Set our address to NULL we want to be given an address.
-    mov  [mmapAddr],ebx ; ^^
-    mov  [mmapFd],  ebx ; Set our file descriptor to NULL
-    mov  [mmapOff], ebx ; Set our offset to NULL
-    
-    mov  ebx,[mmapAddr] ; Point our function to our arguments
-    
-    push eax            ; Push eax onto the stack so we can restore it later
-
-    mov  eax, sys_mmap  ; Set our system call number in eax
+    push ebx
+    push eax
+    mov  eax, 0xC0      ; MMAP2 system call
+    mov  ebx, 0x00      ; Address = NULL
+    mov  edi, 0x00      ; File Descriptor = 0
     int  kernel         ; Call the kernel
     ;; FIXME: Handle error
-    mov  ebx, eax       ; Store our pointer into ebx
+    mov  ecx, eax       ; Move the allocated memory into ecx
     pop  eax            ; Pop our stored value of eax into eax
-
-;--------------------------------- BSS Section ----------------------------------
-;               Variables which have not yet been assigned a value memory is     `
-;               only allocated.                                                  |
-section .bss
-  ; Variables for the mmap function call `man 2 mmap`
-  mmapAddr   resw 1     ; Address to allocate memory to
-  mmapLen    resw 1     ; Size to allocate
-  mmapProt   resw 1     ; Protection flags for the memory
-  mmapFlags  resw 1     ; Visibility flags for the memory
-  mmapFd     resw 1     ; File descriptor
-  mmapOff    resw 1     ; Memory Offset
+    pop  ebx            ; Pop our stored value of ebx into ebx
+    ret  0              ; Return
