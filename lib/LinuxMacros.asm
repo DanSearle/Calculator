@@ -1,6 +1,6 @@
 ;=================================================================================
-; Linux  | Macros to help dealing with the Linux kernel easier, e.g. kernel call ;
-; Macros | numbers, etc.                                                         ;
+; Linux       | Macros to help dealing with the Linux kernel easier, e.g. kernel ;
+; Macros      | call numbers, etc.                                               ;
 ;---------------------------------------------------------------------------------
 ; Licence     | This program is free software: you can redistribute it and/or    ;
 ;             | modify it under the terms of the GNU General Public License as   ;
