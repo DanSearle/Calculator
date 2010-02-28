@@ -28,7 +28,7 @@
 Alloc:
     push ebx
     push eax
-    mov  eax, 0xC0      ; MMAP2 system call
+    mov  eax, sys_mmap2 ; MMAP2 system call
     mov  ebx, 0x00      ; Address = NULL
     mov  edi, 0x00      ; File Descriptor = 0
     int  kernel         ; Call the kernel
@@ -36,4 +36,14 @@ Alloc:
     mov  ecx, eax       ; Move the allocated memory into ecx
     pop  eax            ; Pop our stored value of eax into eax
     pop  ebx            ; Pop our stored value of ebx into ebx
+    ret  0              ; Return
+; UnAlloc ------------------------------------------------------------------------
+;             Free memory for a variable so it can be used by another process.    `
+;             Input is EBX -> Start address to free, ECX -> Length to free.       |
+UnAlloc:
+    push eax            ; Save eax to the stack before we change it
+    mov  eax, sys_munmap; MUNMAP systen call
+    int  kernel         ; Call the kernel
+    ;; FIXME: Handle error
+    pop  eax            ; Restore eax
     ret  0              ; Return
