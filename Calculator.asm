@@ -31,6 +31,7 @@
 ;                                                                                 |
 %include "lib/LinuxMacros.asm"  ; Provides macros for the Linux kernel calls.
 %include "lib/ASCII.asm"        ; Provides ASCII conversion.
+%include "lib/Memory.asm"       ; Provides memory access functions
 
 ;--------------------------------- Text Section ----------------------------------
 ;               This Section is where the assembly code for the program is        `
