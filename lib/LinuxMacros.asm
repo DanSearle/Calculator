@@ -34,10 +34,14 @@
 ; Flags --------------------------------------------------------------------------
 ;               Flags for various operations.                                     `
 ;; Memory Protection Flags
-%define PROT_NONE  0x00; Pages may not be accessed. `man 2 mmap`
-%define PROT_READ  0x01; Pages may be read. `man 2 mmap`
-%define PROT_WRITE 0x02; Pages may be written to. `man 2 mmap`
-%define PROT_EXEC  0x04; Pages may be executed. `man 2 mmap`
+%define PROT_NONE  0x00 ; Pages may not be accessed. `man 2 mmap`
+%define PROT_READ  0x01 ; Pages may be read. `man 2 mmap`
+%define PROT_WRITE 0x02 ; Pages may be written to. `man 2 mmap`
+%define PROT_EXEC  0x04 ; Pages may be executed. `man 2 mmap`
+;; Memory Visibility Flags
+%define MAP_SHARED  0x01; Visible to other processes `man 2 mmap`
+%define MAP_PRIVATE 0x02; Not visible to other processes `man 2 mmap`
+;; FIXME: Add other visibility flags if they are required
 ; Interrupts ---------------------------------------------------------------------
 ;               Interrupts for the linux kernel.                                  `
 %define kernel    0x80 ; Interrupt number for the Linux kernel.
