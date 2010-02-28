@@ -23,10 +23,11 @@
 
 ; Functions ----------------------------------------------------------------------
 ;               Numbers of the system calls within the kernel.                    `
-%define sys_exit  0x01 ; sys_exit function number see `man 2 exit`
-%define sys_read  0x03 ; sys_read function number see `man 2 read`
-%define sys_write 0x04 ; sys_write function number see `man 2 write`
-%define sys_mmap2 0xC0 ; sys_mmap2 function number see `man 2 mmap2`
+%define sys_exit   0x01 ; sys_exit function number see `man 2 exit`
+%define sys_read   0x03 ; sys_read function number see `man 2 read`
+%define sys_write  0x04 ; sys_write function number see `man 2 write`
+%define sys_mmap2  0xC0 ; sys_mmap2 function number see `man 2 mmap2`
+%define sys_munmap 0x5B ; sys_munmap function number see `man 2 mmap`
 ; Files --------------------------------------------------------------------------
 ;               File descriptors to use.                                          `
 %define STDIN     0x00 ; Standard input  buffer is 0, when using sys_* functions.
