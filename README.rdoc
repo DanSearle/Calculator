@@ -25,7 +25,7 @@ The program will return the result of the equation.
 * oss@d-searle.co.uk (Questions and Comments?)
 * http://github.com/DanSearle/Calculator/issues (BugTracker)
 * http://github.com/DanSearle/Calculator (Development Homepage)
-* http://d-searle.co.uk/ (Authors Homepage)
+* http://d-searle.co.uk (Authors Homepage)
 
 == Authors
 * Daniel Searle <oss@d-searle.co.uk> 
