@@ -3,8 +3,6 @@ Open Source x86 Assembly Calculator V1.0-Alpha
 A very simple calculator written in x86 assembly in nasm syntax, only provides
 simple operators Multiply, Divide, Addition and Subtract.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 Installing
 ----------
 There is no installer for this software, if you have recieved the source
@@ -25,8 +23,6 @@ On some shells you man need to escape specific operators, e.g.:
 
 The program will return the result of the equation.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 Contact
 -------
 * oss@d-searle.co.uk (Questions and Comments?)
@@ -34,13 +30,9 @@ Contact
 * http://github.com/DanSearle/Calculator (Development Homepage)
 * http://d-searle.co.uk (Authors Homepage)
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 Authors
 -------
 * Daniel Searle <oss@d-searle.co.uk> 
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Last Change
 -----------
