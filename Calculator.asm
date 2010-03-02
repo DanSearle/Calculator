@@ -5,7 +5,7 @@
 ; The calculator asks for inputs an operation then asks for 2 values for the     ;
 ; operation to be performed on. Then the program returns the result of the       ;
 ; equation.                                                                      ;
-;
+;                                                                                ;
 ;---------------------------------------------------------------------------------
 ; Licence     | This program is free software: you can redistribute it and/or    ;
 ;             | modify it under the terms of the GNU General Public License as   ;
