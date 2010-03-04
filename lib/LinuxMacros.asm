@@ -42,6 +42,8 @@
 ;; Memory Visibility Flags
 %define MAP_SHARED  0x01; Visible to other processes `man 2 mmap`
 %define MAP_PRIVATE 0x02; Not visible to other processes `man 2 mmap`
+%define MAP_ANONYMOUS 0x20; FIXME
+%define MAP_FIXED   0x10; FIXME
 ;; FIXME: Add other visibility flags if they are required
 ; Interrupts ---------------------------------------------------------------------
 ;               Interrupts for the linux kernel.                                  `
