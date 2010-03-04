@@ -27,26 +27,43 @@ section .text
 
 ; ConvNoToASCII -----------------------------------------------------------------
 ;               Converts a number into its ASCII representation, by adding 0x30  `
-;               to the number. Input number to AL and Output value to AL       |
+;               to the number. Input number to AL and Output value to AL         |
 ConvNoToASCII:
     add al, 0x30
     ret 0
 
 ; ConvASCIIToNo -----------------------------------------------------------------
 ;               Converts a ASCII value of a number into the actual number, by    `
-;               subtracting 0x30 from the number. Input value to AL and Output  | 
-;               number to AL.                                                   | 
+;               subtracting 0x30 from the number. Input value to AL and Output   | 
+;               number to AL.                                                    | 
 ConvASCIIToNo:
     sub al , 0x30       ; Subtract 0x30 from eax to get the actual number 
     ret 0               ; Return to who called us
 
 ; TestASCIINumber ---------------------------------------------------------------
-;               Tests that the value in AL is a valid ASCII number.             `
+;               Tests that the value in AL is a valid ASCII number.              `
 ;                                                                                |
 TestASCIINumber:
-    cmp al, 0x30       ; ASCII value should not be below 0x30 Number 0.
+    cmp al, 0x30        ; ASCII value should not be below 0x30 Number 0.
     jb  Exit            ; Exit if it is FIXME: Display error.
-    cmp al, 0x39       ; ASCII value should not be below 0x39 Number 9.
+    cmp al, 0x39        ; ASCII value should not be below 0x39 Number 9.
     ja  Exit            ; Exit if it is FIXME: Display error.
     ret 0               ; Return if the number was valid.
 
+; ASCIItoBCD --------------------------------------------------------------------
+;               Converts an ASCII string to a BCD string.                        `
+;               Input -> EAX - Length of the string, EBX - Start of the string,  |
+;               EDX - Where to save the BCD string. Output -> The BCD string in  | 
+;               the specified place.                                             |
+ASCIItoBCD:
+    push ecx            ; Push ECX onto the stack.
+    xor  ecx, ecx       ; Clear ECX.
+  .next:                ; Move onto the next character.
+    mov  al, [ebx+ecx]  ; Copy the current ASCII character into AL.
+    call ConvASCIIToNo  ; Convert the ASCII to a number.
+    mov  [edx+ecx], al  ; Store the converted value.
+    inc  ecx            ; Move onto the next character.
+    cmp  ecx, eax       ; Make sure we are not at the end of the string.
+    jne  .next          ; Continue if the end has not been met.
+    pop  ecx            ; Pop ECX off of the stack.
+    ret  0              ; Return.
