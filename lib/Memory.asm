@@ -29,8 +29,8 @@ Alloc:
     push ebx
     push eax
     mov  eax, sys_mmap2 ; MMAP2 system call
-    mov  ebx, 0x00      ; Address = NULL
-    mov  edi, 0x00      ; File Descriptor = 0
+    xor  ebx, ebx       ; Address = NULL
+    xor  edi, edi       ; File Descriptor = 0
     int  kernel         ; Call the kernel
     ;; FIXME: Handle error
     mov  ecx, eax       ; Move the allocated memory into ecx
