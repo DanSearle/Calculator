@@ -19,7 +19,7 @@
 ;---------------------------------------------------------------------------------
 ; Authors     | Original Author: Daniel Searle <oss@d-searle.co.uk> 2010         ;
 ;=================================================================================
-
+section .text
 ; StrLen -------------------------------------------------------------------------
 ;               Get the length of a string. EDI -> pointer to the start of the    `
 ;               string, Returns ECX -> Size of the string.                        |
