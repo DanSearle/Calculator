@@ -81,16 +81,19 @@ TestASCIINumberString:
 ;               Converts an ASCII string to a BCD string.                        `
 ;               Input -> EAX - Length of the string, EBX - Start of the string,  |
 ;               EDX - Where to save the BCD string. Output -> The BCD string in  | 
-;               the specified place.                                             |
+;               the specified place. Carry flag set on error.                    |
 ASCIItoBCD:
     push ecx            ; Push ECX onto the stack.
     xor  ecx, ecx       ; Clear ECX.
   .next:                ; Move onto the next character.
     mov  al, [ebx+ecx]  ; Copy the current ASCII character into AL.
+    call TestASCIINumber; Test that the ASCII character is a number.
+    jc   .exit          ; Jump to the error portion if the test failed.
     call ConvASCIIToNo  ; Convert the ASCII to a number.
     mov  [edx+ecx], al  ; Store the converted value.
     inc  ecx            ; Move onto the next character.
     cmp  ecx, eax       ; Make sure we are not at the end of the string.
     jne  .next          ; Continue if the end has not been met.
+  .exit:
     pop  ecx            ; Pop ECX off of the stack.
     ret  0              ; Return.
