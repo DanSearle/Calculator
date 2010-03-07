@@ -58,27 +58,50 @@ main:
     jnz Exit            ; FIXME: Should jump to display an error
     pop ebx             ; Pointer to the block of memory that points to the
                         ; arguments.
-    call NextArg        ; Get the next argument
-    mov [No1], al       ; Copy the extracted value to the variable No1
 
-    call NextArg        ; Get the next argument
-    mov [OpIn], al      ; Save the extracted value to the variable OpIn
-    
-    call NextArg        ; Get the next argument
-    mov [No2], al       ; Save the extracted value to the variable No2
-
-    ;; Test for correct input values
-    xor eax, eax        ; Clear EAX to make sure our values are copied correctly.
-    mov al, [No1]       ; Copy the first numbers value to al.
-    call TestASCIINumber     ; Call the test number routine.
-    call ConvASCIIToNo  ; Convert the ASCII number to the actual numbeR
-    mov [No1], al       ; Copy the converted number to No1
-    mov al, [No2]       ; Copy the second numbers value to al.
-    call TestASCIINumber     ; Call the test number routine.
-    call ConvASCIIToNo  ; Convert the ASCII number to the actual number
-    mov [No2], al       ; Copy the converted number to  No2
-    ;; We get here if the numbers were valid
-
+    call NextArg        ; Get the pointer to the first argument.
+    mov  [No1ASCII], eax; Copy the pointer to the No1ASCII variable.
+    mov  edi, eax       ; Copy the pointer to edi
+    call StrLen         ; Get the length of the string
+    mov  [No1Len], cl   ; Store the length
+    xor  ecx, ecx       ; Clear ecx
+    mov  cl, [No1Len]   ; Copy the length to ECX
+    mov  edx, PROT_READ | PROT_WRITE     ; Allow the data to be read and written to
+    mov  esi, MAP_PRIVATE | MAP_ANONYMOUS; Make the allocations private.
+    call Alloc          ; Allocate the memory and assign a pointer
+    mov  [No1BCD], ecx  ; Save the pointer
+    push ebx            ; Push EBX onto the stack.
+    mov  ebx, [No1ASCII]; Start of our string
+    mov  edx, [No1BCD]  ; Where to store the conversion
+    call ASCIItoBCD     ; Do the conversion.
+    xor  ecx, ecx       ; Clear ecx
+    mov  cl, [No1Len]   ; Length to deallocate
+    mov  ebx, [No1BCD]  ; Address to start deallocating
+    call UnAlloc        ; Deallocate the memory
+    pop  ebx            ; Pop EBX off of the stack.
+    call NextArg        ; Get the pointer to the second argument.
+    ;; TODO: Parse operator
+    call NextArg
+    mov  [No2ASCII], eax; Copy the pointer to the No1ASCII variable.
+    mov  edi, eax       ; Copy the pointer to edi
+    call StrLen         ; Get the length of the string
+    mov  [No2Len], cl   ; Store the length
+    xor  ecx, ecx       ; Clear ecx
+    mov  cl, [No2Len]   ; Copy the length to ECX
+    mov  edx, PROT_READ | PROT_WRITE     ; Allow the data to be read and written to
+    mov  esi, MAP_PRIVATE | MAP_ANONYMOUS; Make the allocations private.
+    call Alloc          ; Allocate the memory and assign a pointer
+    mov  [No2BCD], ecx  ; Save the pointer
+    push ebx            ; Push EBX onto the stack.
+    mov  ebx, [No2ASCII]; Start of our string
+    mov  edx, [No2BCD]  ; Where to store the conversion
+    call ASCIItoBCD     ; Do the conversion.
+    xor  ecx, ecx       ; Clear ecx
+    mov  cl, [No2Len]   ; Length to deallocate
+    mov  ebx, [No2BCD]  ; Address to start deallocating
+    call UnAlloc        ; Deallocate the memory
+    pop  ebx            ; Pop EBX off of the stack.
+    call Exit; Exit 
     ;; Test the operator
     xor eax, eax
     mov al, [OpIn]      ; Load in the operator passed
@@ -110,8 +133,8 @@ StrValues:
     xor ebx, ebx        ; from breaking.
     xor edx, edx        ;
 
-    mov al, [No1]       ; Copy the first number to the AL register.
-    mov bl, [No2]       ; Copy the second number to the BL register.
+    ;mov al, [No1]       ; Copy the first number to the AL register.
+    ;mov bl, [No2]       ; Copy the second number to the BL register.
     ret 0
 ; StrDispResult -----------------------------------------------------------------
 ;               Store the result of a calculation to the Result variable, add    `
@@ -202,7 +225,16 @@ section .data
 ;               Variables which have not yet been assigned a value memory is     `
 ;               only allocated.                                                  |
 section .bss
-    No1      resb 1     ; Reserve a byte for the first number pointer
+    No1ASCII resd 1     ; Reserve a double word for the first number ASCII
+                        ; pointer.
+    No1Len   resb 1     ; Reserve a byte for the length of the first number.
+    No1BCD   resd 1     ; Reserve a double word for the BCD version of the first 
+                        ; number.
+    No2ASCII resd 1     ; Reserve a double word for the first number ASCII
+                        ; pointer.
+    No2Len   resb 1     ; Reserve a byte for the length of the first number.
+    No2BCD   resd 1     ; Reserve a double word for the BCD version of the first 
+                        ; number.
     OpIn     resb 1     ; Reserve a byte for the operation pointer
     No2      resb 1     ; Reserve a byte for the second number pointer
     Result   resw 1     ; Reserve a word for the result as a pure binary number
