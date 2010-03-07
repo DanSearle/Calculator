@@ -42,14 +42,41 @@ ConvASCIIToNo:
 
 ; TestASCIINumber ---------------------------------------------------------------
 ;               Tests that the value in AL is a valid ASCII number.              `
-;                                                                                |
+;               Unsets the carry flag on valid sets it on invalid.               |
 TestASCIINumber:
     cmp al, 0x30        ; ASCII value should not be below 0x30 Number 0.
-    jb  Exit            ; Exit if it is FIXME: Display error.
+    jb  .invalid        ; Jump to the invaild label if the number is not valid.
     cmp al, 0x39        ; ASCII value should not be below 0x39 Number 9.
-    ja  Exit            ; Exit if it is FIXME: Display error.
+    ja  .invalid        ; Jump to the invaild label if the number is not valid.
+    CLC                 ; Clear the carry flag.
     ret 0               ; Return if the number was valid.
-
+  .invalid:             ; Invalid ascii number.
+    STC                 ; Set the carry flag.
+    ret 0 
+; TestASCIINumberString ---------------------------------------------------------
+;               Test if a ASCII string is all numbers.                           `
+;               Input -> EAX - Length of the string, EBX -> Start of the string. |
+;               Output -> Sets the carry flag if anything in the string is       |
+;               invalid.                                                         |
+TestASCIINumberString:
+    push ecx
+    push edx
+    xor  ecx, ecx
+    mov  edx, eax       ; Use EDX for the length because we will over write EAX
+  .next:
+    mov  al, [ebx+ecx]
+    call TestASCIINumber
+    jc   .invalid
+    inc  ecx
+    cmp  ecx, edx
+    jne  .next
+    jmp  .exit
+  .invalid:
+    jmp  .exit
+  .exit:
+    pop  edx
+    pop  ecx
+    ret  0
 ; ASCIItoBCD --------------------------------------------------------------------
 ;               Converts an ASCII string to a BCD string.                        `
 ;               Input -> EAX - Length of the string, EBX - Start of the string,  |
