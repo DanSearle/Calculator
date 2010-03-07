@@ -213,14 +213,6 @@ Display:
     int kernel          ; Call the Linux kernel
     ret 0               ; Return to the section of code that called us.
 
-;--------------------------------- Data Section ---------------------------------
-;               Constant values which do not change during the execution of the  `
-;               program.                                                         |
-section .data 
-    ; String Asks the user to enter an operation
-    OpAsk    db  'Enter an Operation: ' 
-    OpAskLen equ $ - OpAsk ; Length of the text
-
 ;--------------------------------- BSS Section ----------------------------------
 ;               Variables which have not yet been assigned a value memory is     `
 ;               only allocated.                                                  |
