@@ -80,8 +80,9 @@ main:
     call UnAlloc        ; Deallocate the memory
     pop  ebx            ; Pop EBX off of the stack.
     call NextArg        ; Get the pointer to the second argument.
-    ;; TODO: Parse operator
-    call NextArg
+    mov  al, [eax]      ; Get the operator code.
+    mov  [OpIn], al     ; Save the operator code.
+    call NextArg        ; Get the pointer to the third argument.
     mov  [No2ASCII], eax; Copy the pointer to the No1ASCII variable.
     mov  edi, eax       ; Copy the pointer to edi
     call StrLen         ; Get the length of the string
@@ -101,7 +102,7 @@ main:
     mov  ebx, [No2BCD]  ; Address to start deallocating
     call UnAlloc        ; Deallocate the memory
     pop  ebx            ; Pop EBX off of the stack.
-    call Exit; Exit 
+
     ;; Test the operator
     xor eax, eax
     mov al, [OpIn]      ; Load in the operator passed
@@ -124,57 +125,25 @@ NextArg:
                         ; location by 0x04
     mov eax, [ebx]      ; Grab the pointer to the next argument
     ret 0               ; Return
-; StrValues ---------------------------------------------------------------------
-;               Copy the grabbed values from memory into the AL and BL registers.`
-;               Also clear EAX, EBX and EDX to make sure calculations are        |
-;               correct.                                                         |
-StrValues:  
-    xor eax, eax        ; Clear the main registers to prevent our calculations 
-    xor ebx, ebx        ; from breaking.
-    xor edx, edx        ;
-
-    ;mov al, [No1]       ; Copy the first number to the AL register.
-    ;mov bl, [No2]       ; Copy the second number to the BL register.
-    ret 0
-; StrDispResult -----------------------------------------------------------------
-;               Store the result of a calculation to the Result variable, add    `
-;               an new line and output the value to the console.                 |
-StrDispResult:
-    mov [Result], eax   ; Copy the value in EAX to the Result variable.
-    call DisplayResult  ; Display the result to the console
-    ret 0
 ; Subtract ----------------------------------------------------------------------
 ;               Performs the calculation No1 - No2 = Result and displays the     `
 ;               result in ASCII to the terminal.                                 |
 Subtract: 
-    call StrValues      ; Copy the values over
-    sub  al, bl         ; Subtract the second number from the first number
-    call StrDispResult  ; Store the result
     call Exit           ; Exit the application safely
 ; Addition ----------------------------------------------------------------------
 ;               Performs the calulation No1 + No2 = Result and displays the      `
 ;               result in ASCII to the terminal.                                 |
 Addition: 
-    call StrValues      ; Copy the values over
-    add  al, bl         ; Add the first and second numbers together 
-    call StrDispResult  ; Store the result
     call Exit           ; Exit the application safely.
 ; Multiply ----------------------------------------------------------------------
 ;               Performs the calculation No1 * No2 = Result and displays the     `
 ;               result in ASCII to the terminal.                                 |
 Multiply: 
-    call StrValues      ; Copy the values over
-    mul  ebx            ; Multiply EAX(First number) by EBX(Second number)
-    call StrDispResult  ; Store the result
     call Exit           ; Exit the application safely.
 ; Divide ------------------------------------------------------------------------
 ;               Performs the calculation No1/No2 = Result and displays the       `
 ;               result in ASCII to the terminal.                                 |
 Divide: 
-    call StrValues      ; Copy the values over
-    idiv ebx            ; Integer Divide EDX:EAX(First number) by
-                        ; EBX(Second Number).
-    call StrDispResult  ; Store the result
     call Exit           ; Exit the application safely.
 ; Exit --------------------------------------------------------------------------
 ;               Exit is the code that exits the application safely, this         `
