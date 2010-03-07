@@ -93,17 +93,13 @@ main:
     
     ; A invalid operator was entered Exit, FIXME: Display visual feedback
     jmp Exit
-;; FIXME: Could we combine the TestASCIINumber and convert operations into One?
-;; FIXME: Possibly not need ASCII conversion? becasuse arithmetic may still work?
 ; NextArg -----------------------------------------------------------------------
-;               Get the next argument and store it in EAX.                       `
+;               Get the next argument pointer and store it in EAX.               `
 ;                                                                                |
 NextArg:
     add ebx, 0x04       ; Move to the next argument by incrementing our memory
                         ; location by 0x04
-    mov ecx, [ebx]      ; Grab the pointer to the next argument
-    xor eax, eax        ; Clear eax
-    mov al, [ecx]       ; Get the first bit of the argument.
+    mov eax, [ebx]      ; Grab the pointer to the next argument
     ret 0               ; Return
 ; StrValues ---------------------------------------------------------------------
 ;               Copy the grabbed values from memory into the AL and BL registers.`
